@@ -10,10 +10,10 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__AppPage">
-            <property name="ObjectApiName" label="Object API Name" type="String" />
-            <property name="uniqueFieldAPIName" label="Unique Field API Name" type="String" />
-            <property name="otherField" label="Other Field API Name" type="String" />
-            <property name="iDField" label="Id API Name" type="String" />
+            <property name="ObjectApiName" label="Object API Name" type="String" description="The full API name of the object that you are checking the contents of the CSV file against." />
+            <property name="iDField" label=" Id API Name" default="Id" type="String" description="Should be 'Id'." />
+            <property name="otherField" label=" Name Field API Name (Column 1)" default="Name" type="String" description="The API name of the field that you want to display as the 'Name' field of the object in the datatable." />
+            <property name="uniqueFieldAPIName" label="Unique Field API Name (Column 2)" type="String" description="The API name of the field on the object that you are using as the unique field to cross-reference against the Object in 'Object API Name'. " />
         </targetConfig>
     </targetConfigs>
 

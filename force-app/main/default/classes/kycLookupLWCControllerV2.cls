@@ -42,23 +42,35 @@ public with sharing class kycLookupLWCControllerV2 {
                 if ( objectStringList.size() > 0 ) {
 
                     Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
-                    query = 'SELECT '+ iDFieldAPIName + ', ' + otherFieldAPIName + ', ' + fieldAPIName + ' FROM ' + objAPIName + ' WHERE ' + fieldAPIName + ' IN :' + objectStringList;
+                    query = 'SELECT '+ iDFieldAPIName + ', ' + otherFieldAPIName + ', ' + fieldAPIName + ' FROM ' + objAPIName + ' WHERE ' + fieldAPIName + ' IN :objectStringList';
                     System.debug('Built Query = ' + query);
                     //Find object records
                     objectQueryList = Database.query(query);
                     System.debug('objectQueryList = ' + objectQueryList);
+
                     for(sObject objRecord : objectQueryList){
                         DataTableWrapper obj = new DataTableWrapper();
-                        obj.objId = 'objRecord.'+iDFieldAPIName;
-                        System.debug('ob.objId = ' + obj.objId );
-                        obj.otherField = 'objRecord.'+otherFieldAPIName;
-                        obj.otherFieldUrl = '/'+objRecord.Id;
-                        obj.uniqueField = 'objRecord.'+fieldAPIName;
+                        Id varObjId = obj.objId;
+                        String varObjName = obj.otherField;
+                        String varObjUnique = obj.uniqueField;
+                        String varURL = obj.otherFieldUrl;
+
+                        varObjId = (Id)objRecord.get(iDFieldAPIName);
+                        varObjName = (String)objRecord.get(otherFieldAPIName);
+                        varURL = '/'+(Id)objRecord.get(iDFieldAPIName);
+                        varObjUnique = (String)objRecord.get(fieldAPIName);
+
+                        obj.objId = varObjId;
+                        System.debug('obj.objId = ' + obj.objId);
+                        obj.otherField = varObjName;
+                        obj.uniqueField = varObjUnique;
+                        obj.otherFieldUrl = varURL;
+
                         wrapperResponse.add(obj);
                     }
 
 
-                    strMessage = 'Querying ' +objAPIName;
+                    //strMessage = 'Querying ' +objAPIName;
 
                 }
 
@@ -75,7 +87,7 @@ public with sharing class kycLookupLWCControllerV2 {
             Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
 
         }
-
+        System.debug(wrapperResponse);
         //return strMessage;
         return wrapperResponse;
 

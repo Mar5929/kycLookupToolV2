@@ -11,15 +11,15 @@ export default class KycLookupToolV2 extends LightningElement {
 
     @track columns = [
         {
-            label: this.otherField,
-            fieldName: 'otherFieldUrl',
+            label: 'Name',
+            fieldName: 'otherFieldURL',
             type: 'url',
-            typeAttributes: {label: { fieldName: 'name' }, 
+            typeAttributes: {label: { fieldName: 'otherField'}, 
             target: '_blank'},
             sortable: true
         },
         {
-            label: this.uniqueFieldAPIName,
+            label: 'Tax Id',
             fieldName: 'uniqueField',
             type: 'text',
             sortable: true
@@ -31,6 +31,7 @@ export default class KycLookupToolV2 extends LightningElement {
     isLoaded = false;
     //@track columns = columns;
     @track data;
+  
     
 
     get acceptedFormats() {
