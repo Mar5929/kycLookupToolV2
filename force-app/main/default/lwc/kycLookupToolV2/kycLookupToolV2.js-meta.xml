@@ -11,7 +11,9 @@
     <targetConfigs>
         <targetConfig targets="lightning__AppPage">
             <property name="ObjectApiName" label="Object API Name" type="String" />
-            <property name="uniqueFieldAPIName" label="Unique Field API Name" type="Boolean" />
+            <property name="uniqueFieldAPIName" label="Unique Field API Name" type="String" />
+            <property name="otherField" label="Other Field API Name" type="String" />
+            <property name="iDField" label="Id API Name" type="String" />
         </targetConfig>
     </targetConfigs>
 

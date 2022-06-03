@@ -4,20 +4,22 @@ import loadData from '@salesforce/apex/kycLookupLWCControllerV2.loadData';
 
 
 export default class KycLookupToolV2 extends LightningElement {
-    @api ObjectApiName;
-    @api uniqueFieldAPIName;
+    @api ObjectApiName = '';
+    @api uniqueFieldAPIName = '';
+    @api otherField = '';
+    @api iDField = '';
 
     @track columns = [
         {
-            label: 'Name',
-            fieldName: 'nameUrl',
+            label: this.otherField,
+            fieldName: 'otherFieldUrl',
             type: 'url',
             typeAttributes: {label: { fieldName: 'name' }, 
             target: '_blank'},
             sortable: true
         },
         {
-            label: uniqueFieldAPIName,
+            label: this.uniqueFieldAPIName,
             fieldName: 'uniqueField',
             type: 'text',
             sortable: true
@@ -40,7 +42,7 @@ export default class KycLookupToolV2 extends LightningElement {
         this.isLoaded = true;
         const uploadedFiles = event.detail.files;
 
-        loadData( { contentDocumentId : uploadedFiles[0].documentId , objAPIName : ObjectApiName , fieldAPIName : uniqueFieldAPIName } )
+        loadData( { contentDocumentId : uploadedFiles[0].documentId , objAPIName : this.ObjectApiName , fieldAPIName : this.uniqueFieldAPIName , otherFieldAPIName : this.otherField , iDFieldAPIName : this.iDField} )
         .then( result => {
 
             this.isLoaded = false;

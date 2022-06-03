@@ -1,12 +1,13 @@
 public with sharing class kycLookupLWCControllerV2 {
     
     @AuraEnabled
-    public static List<DataTableWrapper> loadData( Id contentDocumentId, String objAPIName, String  fieldAPIName) {
+    public static List<DataTableWrapper> loadData( Id contentDocumentId, String objAPIName, String  fieldAPIName, String otherFieldAPIName, String iDFieldAPIName) {
 
         String strMessage;
-        List < objAPIName > objectQueryList = new List < objAPIName >();
+        List < Sobject > objectQueryList = new List < Sobject >();
         List < String > objectStringList = new List < String >();
         List<DataTableWrapper> wrapperResponse = new List<DataTableWrapper>();
+        String query;
         
         String objUniqueField;
         String objUniqueFieldCleaned;
@@ -25,7 +26,7 @@ public with sharing class kycLookupLWCControllerV2 {
 
 
                     List < String > row = record.split( ',' );
-                    System.debug('Row Value = ' + row);
+                    //System.debug('Row Value = ' + row);
 
                     objUniqueField = row[ 0 ];
                     objUniqueFieldCleaned = objUniqueField.replace('\r', '');
@@ -41,15 +42,18 @@ public with sharing class kycLookupLWCControllerV2 {
                 if ( objectStringList.size() > 0 ) {
 
                     Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
+                    query = 'SELECT '+ iDFieldAPIName + ', ' + otherFieldAPIName + ', ' + fieldAPIName + ' FROM ' + objAPIName + ' WHERE ' + fieldAPIName + ' IN :' + objectStringList;
+                    System.debug('Built Query = ' + query);
                     //Find object records
-                    objectQueryList = [SELECT Id, Name, fieldAPIName FROM objAPIName WHERE fieldAPIName IN :objectStringList];
+                    objectQueryList = Database.query(query);
                     System.debug('objectQueryList = ' + objectQueryList);
-                    for(objAPIName objRecord : objectQueryList){
+                    for(sObject objRecord : objectQueryList){
                         DataTableWrapper obj = new DataTableWrapper();
-                        obj.objId = objRecord.Id;
-                        obj.name = objRecord.Name;
-                        obj.nameUrl = '/'+objRecord.Id;
-                        obj.uniqueField = objRecord.fieldAPIName;
+                        obj.objId = 'objRecord.'+iDFieldAPIName;
+                        System.debug('ob.objId = ' + obj.objId );
+                        obj.otherField = 'objRecord.'+otherFieldAPIName;
+                        obj.otherFieldUrl = '/'+objRecord.Id;
+                        obj.uniqueField = 'objRecord.'+fieldAPIName;
                         wrapperResponse.add(obj);
                     }
 
@@ -81,9 +85,9 @@ public with sharing class kycLookupLWCControllerV2 {
         @AuraEnabled
         public Id objId {get;set;}
         @AuraEnabled
-        public String name {get;set;}
+        public String otherField {get;set;}
         @AuraEnabled
-        public String nameUrl {get;set;}
+        public String otherFieldUrl {get;set;}
         @AuraEnabled
         public String uniqueField {get;set;}
     }
