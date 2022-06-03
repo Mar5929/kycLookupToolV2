@@ -1,12 +1,7 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 import loadData from '@salesforce/apex/kycLookupLWCControllerV2.loadData';
-/*
-const columns = [
-    { label: 'Name', fieldName: 'Name' }, 
-    { label: 'Tax Id', fieldName: 'Tax_Id__c' }
-];
-*/
+
 
 export default class KycLookupToolV2 extends LightningElement {
     @track columns = [
