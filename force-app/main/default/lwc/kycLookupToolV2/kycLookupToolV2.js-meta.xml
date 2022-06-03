@@ -8,5 +8,11 @@
         <target>lightning__AppPage</target>
         <target>lightning__HomePage</target>
     </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage">
+            <property name="ObjectApiName" label="Object API Name" type="String" />
+            <property name="uniqueFieldAPIName" label="Unique Field API Name" type="Boolean" />
+        </targetConfig>
+    </targetConfigs>
 
 </LightningComponentBundle>
