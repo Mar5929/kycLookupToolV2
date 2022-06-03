@@ -50,21 +50,21 @@ public with sharing class kycLookupLWCControllerV2 {
 
                     for(sObject objRecord : objectQueryList){
                         DataTableWrapper obj = new DataTableWrapper();
-                        Id varObjId = obj.objId;
-                        String varObjName = obj.otherField;
-                        String varObjUnique = obj.uniqueField;
-                        String varURL = obj.otherFieldUrl;
+                        Id varObjId = obj.objIdWrapper;
+                        String varObjName = obj.otherFieldWrapper;
+                        String varObjUnique = obj.uniqueFieldWrapper;
+                        String varURL = obj.otherFieldUrlWrapper;
 
                         varObjId = (Id)objRecord.get(iDFieldAPIName);
                         varObjName = (String)objRecord.get(otherFieldAPIName);
                         varURL = '/'+(Id)objRecord.get(iDFieldAPIName);
                         varObjUnique = (String)objRecord.get(fieldAPIName);
 
-                        obj.objId = varObjId;
-                        System.debug('obj.objId = ' + obj.objId);
-                        obj.otherField = varObjName;
-                        obj.uniqueField = varObjUnique;
-                        obj.otherFieldUrl = varURL;
+                        obj.objIdWrapper = varObjId;
+                        System.debug('obj.objId = ' + obj.objIdWrapper);
+                        obj.otherFieldWrapper = varObjName;
+                        obj.uniqueFieldWrapper = varObjUnique;
+                        obj.otherFieldUrlWrapper = varURL;
 
                         wrapperResponse.add(obj);
                     }
@@ -87,21 +87,20 @@ public with sharing class kycLookupLWCControllerV2 {
             Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
 
         }
-        System.debug(wrapperResponse);
-        //return strMessage;
+
         return wrapperResponse;
 
     }
 
     private class DataTableWrapper {
         @AuraEnabled
-        public Id objId {get;set;}
+        public Id objIdWrapper {get;set;}
         @AuraEnabled
-        public String otherField {get;set;}
+        public String otherFieldWrapper {get;set;}
         @AuraEnabled
-        public String otherFieldUrl {get;set;}
+        public String otherFieldUrlWrapper {get;set;}
         @AuraEnabled
-        public String uniqueField {get;set;}
+        public String uniqueFieldWrapper {get;set;}
     }
 
 }
