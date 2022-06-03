@@ -1,15 +1,15 @@
 public with sharing class kycLookupLWCControllerV2 {
     
     @AuraEnabled
-    public static List<DataTableWrapper> loadData( Id contentDocumentId ) {
+    public static List<DataTableWrapper> loadData( Id contentDocumentId, String objAPIName, String  fieldAPIName) {
 
         String strMessage;
-        List < Account > accountsQueryList = new List < Account >();
-        List < String > accountStringList = new List < String >();
+        List < objAPIName > objectQueryList = new List < objAPIName >();
+        List < String > objectStringList = new List < String >();
         List<DataTableWrapper> wrapperResponse = new List<DataTableWrapper>();
         
-        String accountTaxId;
-        String accountTaxIdCleaned;
+        String objUniqueField;
+        String objUniqueFieldCleaned;
 
         if ( contentDocumentId != null ) {
             
@@ -27,10 +27,10 @@ public with sharing class kycLookupLWCControllerV2 {
                     List < String > row = record.split( ',' );
                     System.debug('Row Value = ' + row);
 
-                    accountTaxId = row[ 0 ];
-                    accountTaxIdCleaned = accountTaxId.replace('\r', '');
+                    objUniqueField = row[ 0 ];
+                    objUniqueFieldCleaned = objUniqueField.replace('\r', '');
                     
-                    accountStringList.add( accountTaxIdCleaned );
+                    objectStringList.add( objUniqueFieldCleaned );
 
                 }
 
@@ -38,23 +38,23 @@ public with sharing class kycLookupLWCControllerV2 {
 
             try {    
 
-                if ( accountStringList.size() > 0 ) {
+                if ( objectStringList.size() > 0 ) {
 
                     Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
-                    //Find accounts
-                    accountsQueryList = [SELECT Id, Name, Tax_Id__c FROM Account WHERE Tax_Id__c IN :accountStringList];
-                    System.debug('accountsQueryList = ' + accountsQueryList);
-                    for(Account acctRecord : accountsQueryList){
+                    //Find object records
+                    objectQueryList = [SELECT Id, Name, fieldAPIName FROM objAPIName WHERE fieldAPIName IN :objectStringList];
+                    System.debug('objectQueryList = ' + objectQueryList);
+                    for(objAPIName objRecord : objectQueryList){
                         DataTableWrapper obj = new DataTableWrapper();
-                        obj.acctId = acctRecord.Id;
-                        obj.name = acctRecord.Name;
-                        obj.nameUrl = '/'+acctRecord.Id;
-                        obj.taxId = acctRecord.Tax_Id__c;
+                        obj.objId = objRecord.Id;
+                        obj.name = objRecord.Name;
+                        obj.nameUrl = '/'+objRecord.Id;
+                        obj.uniqueField = objRecord.fieldAPIName;
                         wrapperResponse.add(obj);
                     }
 
 
-                    strMessage = 'Querying Accounts';
+                    strMessage = 'Querying ' +objAPIName;
 
                 }
 
@@ -79,13 +79,13 @@ public with sharing class kycLookupLWCControllerV2 {
 
     private class DataTableWrapper {
         @AuraEnabled
-        public Id acctId {get;set;}
+        public Id objId {get;set;}
         @AuraEnabled
         public String name {get;set;}
         @AuraEnabled
         public String nameUrl {get;set;}
         @AuraEnabled
-        public String taxId {get;set;}
+        public String uniqueField {get;set;}
     }
 
 }
