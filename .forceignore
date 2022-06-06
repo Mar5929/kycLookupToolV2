@@ -5,6 +5,8 @@
 package.xml
 
 # LWC configuration files
+**/kycLookupLWCControllerV2.cls
+
 **/jsconfig.json
 **/.eslintrc.json
 
