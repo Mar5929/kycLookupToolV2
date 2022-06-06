@@ -1,15 +1,16 @@
 public with sharing class kycLookupLWCControllerV2 {
     
     @AuraEnabled
-    public static List<DataTableWrapper> loadData( Id contentDocumentId ) {
+    public static List<DataTableWrapper> loadData( Id contentDocumentId, String objAPIName, String  fieldAPIName, String otherFieldAPIName, String iDFieldAPIName) {
 
         String strMessage;
-        List < Account > accountsQueryList = new List < Account >();
-        List < String > accountStringList = new List < String >();
+        List < Sobject > objectQueryList = new List < Sobject >();
+        List < String > objectStringList = new List < String >();
         List<DataTableWrapper> wrapperResponse = new List<DataTableWrapper>();
+        String query;
         
-        String accountTaxId;
-        String accountTaxIdCleaned;
+        String objUniqueField;
+        String objUniqueFieldCleaned;
 
         if ( contentDocumentId != null ) {
             
@@ -25,12 +26,12 @@ public with sharing class kycLookupLWCControllerV2 {
 
 
                     List < String > row = record.split( ',' );
-                    System.debug('Row Value = ' + row);
+                    //System.debug('Row Value = ' + row);
 
-                    accountTaxId = row[ 0 ];
-                    accountTaxIdCleaned = accountTaxId.replace('\r', '');
+                    objUniqueField = row[ 0 ];
+                    objUniqueFieldCleaned = objUniqueField.replace('\r', '');
                     
-                    accountStringList.add( accountTaxIdCleaned );
+                    objectStringList.add( objUniqueFieldCleaned );
 
                 }
 
@@ -38,23 +39,38 @@ public with sharing class kycLookupLWCControllerV2 {
 
             try {    
 
-                if ( accountStringList.size() > 0 ) {
+                if ( objectStringList.size() > 0 ) {
 
                     Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
-                    //Find accounts
-                    accountsQueryList = [SELECT Id, Name, Tax_Id__c FROM Account WHERE Tax_Id__c IN :accountStringList];
-                    System.debug('accountsQueryList = ' + accountsQueryList);
-                    for(Account acctRecord : accountsQueryList){
+                    query = 'SELECT '+ iDFieldAPIName + ', ' + otherFieldAPIName + ', ' + fieldAPIName + ' FROM ' + objAPIName + ' WHERE ' + fieldAPIName + ' IN :objectStringList';
+                    System.debug('Built Query = ' + query);
+                    //Find object records
+                    objectQueryList = Database.query(query);
+                    System.debug('objectQueryList = ' + objectQueryList);
+
+                    for(sObject objRecord : objectQueryList){
                         DataTableWrapper obj = new DataTableWrapper();
-                        obj.acctId = acctRecord.Id;
-                        obj.name = acctRecord.Name;
-                        obj.nameUrl = '/'+acctRecord.Id;
-                        obj.taxId = acctRecord.Tax_Id__c;
+                        Id varObjId = obj.objIdWrapper;
+                        String varObjName = obj.otherFieldWrapper;
+                        String varObjUnique = obj.uniqueFieldWrapper;
+                        String varURL = obj.otherFieldUrlWrapper;
+
+                        varObjId = (Id)objRecord.get(iDFieldAPIName);
+                        varObjName = (String)objRecord.get(otherFieldAPIName);
+                        varURL = '/'+(Id)objRecord.get(iDFieldAPIName);
+                        varObjUnique = (String)objRecord.get(fieldAPIName);
+
+                        obj.objIdWrapper = varObjId;
+                        System.debug('obj.objId = ' + obj.objIdWrapper);
+                        obj.otherFieldWrapper = varObjName;
+                        obj.uniqueFieldWrapper = varObjUnique;
+                        obj.otherFieldUrlWrapper = varURL;
+
                         wrapperResponse.add(obj);
                     }
 
 
-                    strMessage = 'Querying Accounts';
+                    //strMessage = 'Querying ' +objAPIName;
 
                 }
 
@@ -72,20 +88,19 @@ public with sharing class kycLookupLWCControllerV2 {
 
         }
 
-        //return strMessage;
         return wrapperResponse;
 
     }
 
     private class DataTableWrapper {
         @AuraEnabled
-        public Id acctId {get;set;}
+        public Id objIdWrapper {get;set;}
         @AuraEnabled
-        public String name {get;set;}
+        public String otherFieldWrapper {get;set;}
         @AuraEnabled
-        public String nameUrl {get;set;}
+        public String otherFieldUrlWrapper {get;set;}
         @AuraEnabled
-        public String taxId {get;set;}
+        public String uniqueFieldWrapper {get;set;}
     }
 
 }
