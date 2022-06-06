@@ -1,5 +1,5 @@
 # Build and Release Folders
-
+force-app\main\default\classes\kycLookupLWCControllerV2.cls
 
 # Other files and folders
 .sfdx/
