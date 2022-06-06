@@ -87,7 +87,8 @@ public with sharing class kycLookupLWCControllerV2 {
             Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
 
         }
-
+        
+        //returns the DataTableWrapper object with data for datatable and hyperlink in the name field
         return wrapperResponse;
 
     }
