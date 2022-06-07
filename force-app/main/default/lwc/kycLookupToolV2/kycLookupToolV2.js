@@ -28,7 +28,10 @@ export default class KycLookupToolV2 extends LightningElement {
     ];
 
     error;
-    isLoaded = false;
+    isLoading = false;
+    isLoadingFinished = false;
+    isDataEmpty = false;
+    dataNotEmpty = false;
     //@track columns = columns;
     @track data;
   
@@ -40,15 +43,23 @@ export default class KycLookupToolV2 extends LightningElement {
 
     uploadFileHandler( event ) {
         
-        this.isLoaded = true;
+        this.isLoading = true;
         const uploadedFiles = event.detail.files;
 
         loadData( { contentDocumentId : uploadedFiles[0].documentId , objAPIName : this.ObjectApiName , fieldAPIName : this.uniqueFieldAPIName , otherFieldAPIName : this.otherField , iDFieldAPIName : this.iDField} )
         .then( result => {
 
-            this.isLoaded = false;
+            this.isLoading = false;
+            this.isLoadingFinished = true;
             window.console.log('result ===> '+result);
+            
             this.data = result;
+            window.console.log('Object.keys(this.data).length: ' + Object.keys(this.data).length);
+            if (Object.keys(this.data).length === 0) {
+                this.isDataEmpty = true;
+            } else {
+                this.dataNotEmpty = true;
+            }
             this.dispatchEvent(
                 new ShowToastEvent( {
                     title: 'Success',
@@ -56,11 +67,14 @@ export default class KycLookupToolV2 extends LightningElement {
                     variant: 'success'
                 } ),
             );
+            window.console.log('isDataEmpty = '+ this.isDataEmpty);
+            window.console.log('dataNotEmpty = '+ this.dataNotEmpty);
 
         })
         .catch( error => {
 
-            this.isLoaded = false;
+            this.isLoading = false;
+            this.isLoadingFinished = true;
             this.error = error;
             window.console.log('error ===> '+error);
 

@@ -1,5 +1,5 @@
 <template>
-    <template if:true={isLoaded}>
+    <template if:true={isLoading}>
         <lightning-spinner 
             alternative-text="Loading" 
             size="large">
@@ -22,19 +22,20 @@
     </lightning-card>
     
 
-    <template if:true={data}>
+    <template if:true={isLoadingFinished}>
         <div class="slds-p-top_medium">
             <lightning-card variant="Narrow" icon-name="standard:contact_list" title="Results">
                     <!--</p>-->
-                <br/>
-                <br/>
-            
-                <div if:true={data}>
+                
+                <div if:true={dataNotEmpty} class="slds-p-around_medium">
                     <lightning-datatable columns={columns} 
                                         data={data} 
                                         hide-checkbox-column="true" 
                                         key-field="Id">
                     </lightning-datatable>
+                </div>
+                <div if:true={isDataEmpty} class="slds-p-around_medium slds-text-heading_small" >
+                    There are no results returned. Please double check the file and re-upload if needed.
                 </div>
             </lightning-card>
         </div>
