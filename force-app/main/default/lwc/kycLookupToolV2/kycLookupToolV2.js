@@ -8,6 +8,8 @@ export default class KycLookupToolV2 extends LightningElement {
     @api uniqueFieldAPIName = '';
     @api otherField = '';
     @api iDField = '';
+    @api column3Field = '';
+    @api column4Field = '';
 
     @track columns = [
         {
@@ -21,6 +23,19 @@ export default class KycLookupToolV2 extends LightningElement {
         {
             label: 'Tax Id',
             fieldName: 'uniqueFieldWrapper',
+            type: 'text',
+            sortable: true
+        },
+        {
+            label: 'Date of Birth',
+            fieldName: 'column3FieldWrapper',
+            type: 'text',
+            sortable: true
+        },
+        {
+            label: 'KYC Complete?',
+            fieldName: 'isKYCCompleteWrapper',
+            cellAttributes : {class: { fieldName: 'format'}},
             type: 'text',
             sortable: true
         }
@@ -49,13 +64,15 @@ export default class KycLookupToolV2 extends LightningElement {
         this.dataNotEmpty = false;
         const uploadedFiles = event.detail.files;
 
-        loadData( { contentDocumentId : uploadedFiles[0].documentId , objAPIName : this.ObjectApiName , fieldAPIName : this.uniqueFieldAPIName , otherFieldAPIName : this.otherField , iDFieldAPIName : this.iDField} )
+        loadData( { contentDocumentId : uploadedFiles[0].documentId , objAPIName : this.ObjectApiName ,
+                 fieldAPIName : this.uniqueFieldAPIName , otherFieldAPIName : this.otherField , 
+                 iDFieldAPIName : this.iDField , column3Field : this.column3Field , column4Field : this.column4Field } )
         .then( result => {
 
             this.isLoading = false;
             this.isLoadingFinished = true;
             window.console.log('result ===> '+result);
-            
+            //process resulting data in DataTableWrapper
             this.data = result;
             window.console.log('Object.keys(this.data).length: ' + Object.keys(this.data).length);
             if (Object.keys(this.data).length === 0) {
@@ -63,6 +80,10 @@ export default class KycLookupToolV2 extends LightningElement {
                 this.isDataEmptyErrorMessage = 'There are no results returned. Please double check the file and re-upload if needed.';
             } else {
                 this.dataNotEmpty = true;
+                this.data.forEach(rec => {
+                    rec.format = rec.isKYCCompleteWrapper == 'KYC Complete' ? 'slds-text-color_success' : 'slds-text-color_error';
+                })
+                this.data = data;
             }
             this.dispatchEvent(
                 new ShowToastEvent( {

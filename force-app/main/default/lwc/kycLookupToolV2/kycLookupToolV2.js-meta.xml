@@ -14,6 +14,8 @@
             <property name="iDField" label=" Id API Name" default="Id" type="String" description="Should be 'Id'." />
             <property name="otherField" label=" Name Field API Name (Column 1)" default="Name" type="String" description="The API name of the field that you want to display as the 'Name' field of the object in the datatable." />
             <property name="uniqueFieldAPIName" label="Unique Field API Name (Column 2)" type="String" description="The API name of the field on the object that you are using as the unique field to cross-reference against the Object in 'Object API Name'. " />
+            <property name="column3Field" label="Field API Name for column 3" type="String" description="API name for column 3" />
+            <property name="column4Field" label="Field API Name for column 4 (Should be CRM_Number_of_KYC_Records__c)" default="CRM_Number_of_KYC_Records__c" type="String" description="API name for column 4" />
         </targetConfig>
     </targetConfigs>
 

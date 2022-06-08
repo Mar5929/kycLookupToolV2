@@ -1,7 +1,7 @@
 public with sharing class kycLookupLWCControllerV2 {
     
     @AuraEnabled
-    public static List<DataTableWrapper> loadData( Id contentDocumentId, String objAPIName, String  fieldAPIName, String otherFieldAPIName, String iDFieldAPIName) {
+    public static List<DataTableWrapper> loadData( Id contentDocumentId, String objAPIName, String  fieldAPIName, String otherFieldAPIName, String iDFieldAPIName, String column3Field, String column4Field) {
 
         String strMessage;
         List < Sobject > objectQueryList = new List < Sobject >();
@@ -11,6 +11,7 @@ public with sharing class kycLookupLWCControllerV2 {
         
         String objUniqueField;
         String objUniqueFieldCleaned;
+        String isKYCComplete;
 
         if ( contentDocumentId != null ) {
             
@@ -42,7 +43,8 @@ public with sharing class kycLookupLWCControllerV2 {
                 if ( objectStringList.size() > 0 ) {
 
                     Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
-                    query = 'SELECT '+ iDFieldAPIName + ', ' + otherFieldAPIName + ', ' + fieldAPIName + ' FROM ' + objAPIName + ' WHERE ' + fieldAPIName + ' IN :objectStringList';
+                    query = 'SELECT '+ iDFieldAPIName + ', ' + otherFieldAPIName + ', ' + fieldAPIName + ', ' + column3Field + ', ' + column4Field
+                            + ' FROM ' + objAPIName + ' WHERE ' + fieldAPIName + ' IN :objectStringList';
                     System.debug('Built Query = ' + query);
                     //Find object records
                     objectQueryList = Database.query(query);
@@ -54,17 +56,29 @@ public with sharing class kycLookupLWCControllerV2 {
                         String varObjName = obj.otherFieldWrapper;
                         String varObjUnique = obj.uniqueFieldWrapper;
                         String varURL = obj.otherFieldUrlWrapper;
+                        String varcolumn3 = obj.column3FieldWrapper;
+                        String varcolumn4 = '';
+                        String varKYCcomplete = obj.isKYCCompleteWrapper;
 
                         varObjId = (Id)objRecord.get(iDFieldAPIName);
                         varObjName = (String)objRecord.get(otherFieldAPIName);
                         varURL = '/'+(Id)objRecord.get(iDFieldAPIName);
                         varObjUnique = (String)objRecord.get(fieldAPIName);
+                        varcolumn3 = String.valueOf((Date)objRecord.get(column3Field));
+                        varcolumn4 =  String.valueOf((Decimal)objRecord.get(column4Field));
+                        if (varcolumn4 == '1') {
+                            varKYCcomplete = 'KYC Complete';
+                        }else {
+                            varKYCcomplete = 'KYC Incomplete';
+                        }
 
                         obj.objIdWrapper = varObjId;
                         System.debug('obj.objId = ' + obj.objIdWrapper);
                         obj.otherFieldWrapper = varObjName;
                         obj.uniqueFieldWrapper = varObjUnique;
                         obj.otherFieldUrlWrapper = varURL;
+                        obj.column3FieldWrapper = varcolumn3;
+                        obj.isKYCCompleteWrapper = varKYCcomplete;
 
                         wrapperResponse.add(obj);
                     }
@@ -102,6 +116,10 @@ public with sharing class kycLookupLWCControllerV2 {
         public String otherFieldUrlWrapper {get;set;}
         @AuraEnabled
         public String uniqueFieldWrapper {get;set;}
+        @AuraEnabled
+        public String column3FieldWrapper {get;set;}
+        @AuraEnabled
+        public String isKYCCompleteWrapper {get;set;}
     }
 
 }
