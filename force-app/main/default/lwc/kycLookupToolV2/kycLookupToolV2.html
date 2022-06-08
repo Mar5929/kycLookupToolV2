@@ -35,7 +35,7 @@
                     </lightning-datatable>
                 </div>
                 <div if:true={isDataEmpty} class="slds-p-around_medium slds-text-heading_small" >
-                    There are no results returned. Please double check the file and re-upload if needed.
+                    {isDataEmptyErrorMessage}
                 </div>
             </lightning-card>
         </div>

@@ -31,6 +31,7 @@ export default class KycLookupToolV2 extends LightningElement {
     isLoading = false;
     isLoadingFinished = false;
     isDataEmpty = false;
+    isDataEmptyErrorMessage = '';
     dataNotEmpty = false;
     //@track columns = columns;
     @track data;
@@ -44,6 +45,8 @@ export default class KycLookupToolV2 extends LightningElement {
     uploadFileHandler( event ) {
         
         this.isLoading = true;
+        this.isDataEmpty = false;
+        this.dataNotEmpty = false;
         const uploadedFiles = event.detail.files;
 
         loadData( { contentDocumentId : uploadedFiles[0].documentId , objAPIName : this.ObjectApiName , fieldAPIName : this.uniqueFieldAPIName , otherFieldAPIName : this.otherField , iDFieldAPIName : this.iDField} )
@@ -57,6 +60,7 @@ export default class KycLookupToolV2 extends LightningElement {
             window.console.log('Object.keys(this.data).length: ' + Object.keys(this.data).length);
             if (Object.keys(this.data).length === 0) {
                 this.isDataEmpty = true;
+                this.isDataEmptyErrorMessage = 'There are no results returned. Please double check the file and re-upload if needed.';
             } else {
                 this.dataNotEmpty = true;
             }
@@ -69,12 +73,15 @@ export default class KycLookupToolV2 extends LightningElement {
             );
             window.console.log('isDataEmpty = '+ this.isDataEmpty);
             window.console.log('dataNotEmpty = '+ this.dataNotEmpty);
+            
 
         })
         .catch( error => {
 
             this.isLoading = false;
             this.isLoadingFinished = true;
+            this.isDataEmpty = true;
+            this.isDataEmptyErrorMessage = 'Something went wrong. Please contact your salesforce admin for help.';
             this.error = error;
             window.console.log('error ===> '+error);
 
