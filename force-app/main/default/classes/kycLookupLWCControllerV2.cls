@@ -23,8 +23,8 @@ public with sharing class kycLookupLWCControllerV2 {
             //iterate over csv rows and adding row value to string list
             for ( String record : records ) {
 
-                if ( record != null ) {
-
+                if ( record != null && String.isNotBlank(record) ) {
+                    System.debug('In String record : records Loop');
 
                     List < String > row = record.split( ',' );
                     //System.debug('Row Value = ' + row);
@@ -33,18 +33,21 @@ public with sharing class kycLookupLWCControllerV2 {
                     objUniqueFieldCleaned = objUniqueField.replace('\r', '');
                     
                     objectStringList.add( objUniqueFieldCleaned );
+                    System.debug('objectStringList' + objectStringList);
 
                 }
 
             }
+            
+            Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
 
             try {    
 
                 if ( objectStringList.size() > 0 ) {
 
-                    Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
+                    
                     query = 'SELECT '+ iDFieldAPIName + ', ' + otherFieldAPIName + ', ' + fieldAPIName + ', ' + column3Field + ', ' + column4Field
-                            + ' FROM ' + objAPIName + ' WHERE ' + fieldAPIName + ' IN :objectStringList';
+                            + ' FROM ' + objAPIName + ' WHERE ' + fieldAPIName + ' != \'\' AND ' + fieldAPIName + ' IN :objectStringList';
                     System.debug('Built Query = ' + query);
                     //Find object records
                     objectQueryList = Database.query(query);
@@ -82,6 +85,7 @@ public with sharing class kycLookupLWCControllerV2 {
 
                         wrapperResponse.add(obj);
                     }
+                    
 
 
                     //strMessage = 'Querying ' +objAPIName;

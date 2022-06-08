@@ -81,9 +81,9 @@ export default class KycLookupToolV2 extends LightningElement {
             } else {
                 this.dataNotEmpty = true;
                 this.data.forEach(rec => {
-                    rec.format = rec.isKYCCompleteWrapper == 'KYC Complete' ? 'slds-text-color_success' : 'slds-text-color_error';
+                    rec.format = rec.isKYCCompleteWrapper == 'KYC Complete' ? 'slds-theme_success' : 'slds-theme_warning';
                 })
-                this.data = data;
+                
             }
             this.dispatchEvent(
                 new ShowToastEvent( {
