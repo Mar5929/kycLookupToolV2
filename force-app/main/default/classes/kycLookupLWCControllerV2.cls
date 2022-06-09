@@ -39,9 +39,9 @@ public with sharing class kycLookupLWCControllerV2 {
 
             }
             
-            Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
 
             try {    
+                Database.DeleteResult deleteResult = Database.delete( contentDocumentId, true );
 
                 if ( objectStringList.size() > 0 ) {
 
